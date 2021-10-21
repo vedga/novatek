@@ -1,0 +1,2265 @@
+<!DOCTYPE html>
+<style type="text/css">
+    html{
+        width: 100%;
+        height: 100%;
+    }
+    body{
+        background-color: #cacaca;
+        font-family: monospace, sans-serif;
+        font-size: 18px;
+        padding: 25px;
+    }
+    .header{
+        color: #2700ff;
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 30px;
+    }
+    .group{
+        background-color: honeydew;
+        border-radius: 10px;
+        padding: 10px;
+        width: 100%;
+        margin-bottom: 20px;
+        box-shadow: 0 0 5px 0px black;
+    }
+    .group .title .name{
+        color: green;
+        font-weight: bold;
+        font-size: 20px;
+    }
+    .group .title .info{
+        font-weight: bold;
+        margin-left: 20px;
+        margin-bottom: 20px;
+        font-style: italic;
+    }
+    .group .api{
+        border: 2px solid black;
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-shadow: 3px 3px #7d7d7d;
+    }
+    .group .api .name{
+        font-weight: bold;
+        color:mediumblue
+    }
+    .group .api .info{
+        margin-left: 15px;
+        font-style: italic;
+    }
+    .group .api .example{
+        color: black;
+    }
+    .group .api .example .name{
+        color: black;
+        font-weight: bold;
+    }
+    .group .api .example .request, .responce{
+        margin-top: 10px;
+    }
+    .group .api .example .responce span{
+        color:seagreen;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+    .group .api .example .request span{
+        color: tomato;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+    .group .api .example ul{
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    .group .comment{
+        font-style: italic;
+        margin-top: 10px;
+    }
+
+</style>
+<html>
+    <body>
+        <div class="header">WEB API для приборов</br>EM-125, EM-126T, EM-129</div>
+        
+        <div class="group">
+            <div class="comment">Все запросы на устройство должны отправлятся методом 'GET /... HTTP/1.0'.</div>
+            <div class="comment">На запрос устройство возвращает JSON {...,"STATUS":"OK"} ответ, с вложенным результатом обработки запроса.</div>
+            <div class="comment">После входа на устройство (команда /api/login) в запрос необходимо включать полученный ключ сессии 'SID' (Пример: GET /73c637c6dbea14c75c/api/all/get?volt_rms).</div>
+        </div>
+            
+        <div class="group">
+            <div class="title">
+                <div class="name">ALL API's</div>
+                <div class="info">Группа команд для работы с общими данными.</div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?sys_flag</div>
+                <div class="info">Состояние флагов устройства.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?sys_flag</div>
+                    <div class="responce"><span>Ответ:</span>{"sys_flag":SYS_FLAGS,"STATUS":"OK"}
+                    <ul>
+                        <li>SYS_FLAGS - битовые флаги состояний на устройстве.</li>
+                        <ul>
+                            <li>Бит 0 - идет отсчет времени АПВ по напряжению.</li>
+                            <li>Бит 1 - идет отсчет времени АПВ по току.</li>
+                            <li>Бит 2 - идет отсчет времени АПВ по мощности.</li>
+                            <li>Бит 3 - идет отсчет времени задержки включения.</li>
+                            <li>Бит 4 - состояние реле нагрузки (включено/отключено).</li>
+                            <li>Бит 5 - зарезервирован.</li>
+                            <li>Бит 6 - управление нагрузкой выполняется по событиям.</li>
+                            <li>Бит 7 - управление нагрузкой выполняется пользователем вручную.</li>
+                            <li>Бит 8 - управление нагрузкой заблокировано отпуском.</li>
+                            <li>Бит 9 - время синхронизировано с сервером NTP.</li>
+                            <li>Бит 10 - время синхронизировано с облаком my.overvis.com.</li>
+                            <li>Бит 11 - лицевая панель заблокирована.</li>
+                            <li>Бит 12 - идет счет времени АПВ по частоте.</li>
+                            <li>Биты с 13 по 15 - зарезервированы.</li>
+                            <li>Бит 16 - wi-fi в режиме клиента сети.</li>
+                            <li>Бит 17 - wi-fi подключен и получен IP адрес.</li>
+                            <li>Бит 18 - wi-fi в режиме точки доступа сети.</li>
+                            <li>Бит 19 - wi-fi запущен и выдан IP адрес.</li>
+                            <li>Биты с 20 по 25 - зарезервированы.</li>
+                            <li>Бит 26 - WEB служба запущена.</li>
+                            <li>Бит 27 - CLOUD служба запущена.</li>
+                            <li>Бит 28 - NTP служба запущена.</li>
+                            <li>Бит 29 - DNS служба запущена.</li>
+                            <li>Биты с 30 по 31 - зарезервированы.</li>
+                        </ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?faul_flag</div>
+                <div class="info">Состояние флагов ошибок устройства.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?faul_flag</div>
+                    <div class="responce"><span>Ответ:</span>{"faul_flag":FAUL_FLAGS,"STATUS":"OK"}
+                    <ul>
+                        <li>FAUL_FLAGS - битовые флаги ошибок на устройстве.</li>
+                        <ul>
+                            <li>Бит 0 - верхний порог напряжения.</li>
+                            <li>Бит 1 - нижний порог напряжения.</li>
+                            <li>Бит 2 - обнаружено напряжение более 290 В.</li>
+                            <li>Бит 3 - превышен лимит повторных включений по напряжению.</li>
+                            <li>Бит 4 - порог по току.</li>
+                            <li>Бит 5 - обнаружен ток более 17 А.</li>
+                            <li>Бит 6 - превышен лимит повторных включений по току.</li>
+                            <li>Бит 7 - порог по мощности.</li>
+                            <li>Бит 8 - превышен лимит повторных включений по мощности.</li>
+                            <li>Бит 9 - неисправность датчика температуры.</li>
+                            <li>Бит 10 - обрыв датчика температуры.</li>
+                            <li>Бит 11 - замыкание датчика температуры.</li>
+                            <li>Бит 12 - сбой часов реального времени.</li>
+                            <li>Бит 13 - неисправность реле нагрузки (наличие тока при отключенном реле).</li>
+                            <li>Бит 14 - заблокирован по ограничению времени работы.</li>
+                            <li>Бит 15 - верхний порог частоты.</li>
+                            <li>Бит 16 - нижний порог частоты.</li>
+                            <li>Бит 17 - превышен лимит повторных включений по частоте.</li>
+                            <li>Биты с 18 по 29- зарезервированы.</li>
+                            <li>Бит 30 - устройство не калибровано.</li>
+                            <li>Бит 31 - повреждение настроек.</li>
+                        </ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?ar_time</div>
+                <div class="info">Оставшееся время до повторного включения.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?ar_time</div>
+                    <div class="responce"><span>Ответ:</span>{"ar_time":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - время в секундах.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?time</div>
+                <div class="info">Текущее время.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?time</div>
+                    <div class="responce"><span>Ответ:</span>{"time":"VALUE DST","STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - UNIX время в секундах.</li>
+                        <li>DST - признак того что время скорректировано на летнее.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?volt_msr</div>
+                <div class="info">Текущее напряжение.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?volt_msr</div>
+                    <div class="responce"><span>Ответ:</span>{"volt_msr":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение напряжения в В * 10.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?cur_msr</div>
+                <div class="info">Текущий ток.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?cur_msr</div>
+                    <div class="responce"><span>Ответ:</span>{"cur_msr":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение тока в А * 100.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?powa_msr</div>
+                <div class="info">Текущая активная мощность.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?powa_msr</div>
+                    <div class="responce"><span>Ответ:</span>{"powa_msr":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение мощности в Вт.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?pows_msr</div>
+                <div class="info">Текущая полная мощность.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?pows_msr</div>
+                    <div class="responce"><span>Ответ:</span>{"pows_msr":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение мощности в ВА.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?tempr_msr</div>
+                <div class="info">Текущая температура.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?tempr_msr</div>
+                    <div class="responce"><span>Ответ:</span>{"tempr_msr":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение температуры в С * 10.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?freq_msr</div>
+                <div class="info">Текущая частота.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?freq_msr</div>
+                    <div class="responce"><span>Ответ:</span>{"freq_msr":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение частоты в Гц * 100.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?enrgs_msr</div>
+                <div class="info">Счетчик полной мощности.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?enrgs_msr</div>
+                    <div class="responce"><span>Ответ:</span>{"enrgs_msr":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение счетчика в ВА*ч.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?enrga_msr</div>
+                <div class="info">Счетчик активной мощности.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?enrga_msr</div>
+                    <div class="responce"><span>Ответ:</span>{"enrga_msr":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение счетчика в Вт*ч.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?enrga_m_msr</div>
+                <div class="info">Счетчик активной мощности за месяц.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?enrga_m_msr</div>
+                    <div class="responce"><span>Ответ:</span>{"enrga_m_msr":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение счетчика в Вт*ч.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?enrga_w_msr</div>
+                <div class="info">Счетчик активной мощности за неделю.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?enrga_w_msr</div>
+                    <div class="responce"><span>Ответ:</span>{"enrga_w_msr":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение счетчика в Вт*ч.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?enrga_d_msr</div>
+                <div class="info">Счетчик активной мощности за сутки.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?enrga_d_msr</div>
+                    <div class="responce"><span>Ответ:</span>{"enrga_d_msr":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение счетчика в Вт*ч.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?wifi_ssid</div>
+                <div class="info">Имя сети Wi-Fi.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?wifi_ssid</div>
+                    <div class="responce"><span>Ответ:</span>{"wifi_ssid":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?wifi_passw</div>
+                <div class="info">Пароль сети Wi-Fi.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?wifi_passw</div>
+                    <div class="responce"><span>Ответ:</span>{"wifi_passw":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение пароля зашифрованное алгоритмом SHA1.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?wifi_dhcp_enable</div>
+                <div class="info">Настройка DHCP.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?wifi_dhcp_enable</div>
+                    <div class="responce"><span>Ответ:</span>{"wifi_dhcp_enable":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?wifi_ip</div>
+                <div class="info">Статический адрес IP.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?wifi_ip</div>
+                    <div class="responce"><span>Ответ:</span>{"wifi_ip":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?wifi_gw</div>
+                <div class="info">Шлюз.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?wifi_gw</div>
+                    <div class="responce"><span>Ответ:</span>{"wifi_gw":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?wifi_mask</div>
+                <div class="info">Маска подсети.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?wifi_mask</div>
+                    <div class="responce"><span>Ответ:</span>{"wifi_mask":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?volt_leveloff_hi</div>
+                <div class="info">Верхний порог отключения по напряжению.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?volt_leveloff_hi</div>
+                    <div class="responce"><span>Ответ:</span>{"volt_leveloff_hi":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?volt_leveloff_lo</div>
+                <div class="info">Нижний порог отключения по напряжению.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?volt_leveloff_lo</div>
+                    <div class="responce"><span>Ответ:</span>{"volt_leveloff_lo":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?volt_level_hys</div>
+                <div class="info">Гистерезис для защиты по напряжению.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?volt_level_hys</div>
+                    <div class="responce"><span>Ответ:</span>{"volt_level_hys":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?volt_timeoff_hi</div>
+                <div class="info">Задержка отключения по верхнему парогу напряжения.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?volt_timeoff_hi</div>
+                    <div class="responce"><span>Ответ:</span>{"volt_timeoff_hi":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?volt_timeoff_lo</div>
+                <div class="info">Задержка отключения по нижнему порогу напряжения.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?volt_timeoff_lo</div>
+                    <div class="responce"><span>Ответ:</span>{"volt_timeoff_lo":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?volt_timeon_apv</div>
+                <div class="info">Задержка перед повторным включением для защиты по напряжению.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?volt_timeon_apv</div>
+                    <div class="responce"><span>Ответ:</span>{"volt_timeon_apv":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?volt_count_apv</div>
+                <div class="info">Количество разрешенных повторных включений для защиты по напряжению.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?volt_count_apv</div>
+                    <div class="responce"><span>Ответ:</span>{"volt_count_apv":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?cur_leveloff</div>
+                <div class="info">Порог отключения для защиты по току.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?cur_leveloff</div>
+                    <div class="responce"><span>Ответ:</span>{"cur_leveloff":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?cur_timeoff</div>
+                <div class="info">Задержка отключения для защиты по току.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?cur_timeoff</div>
+                    <div class="responce"><span>Ответ:</span>{"cur_timeoff":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?cur_timeon_apv</div>
+                <div class="info">Задержка повторного включения для защиты по току.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?cur_timeon_apv</div>
+                    <div class="responce"><span>Ответ:</span>{"cur_timeon_apv":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?cur_count_apv</div>
+                <div class="info">Количетво разрешенных повторных включений для защиты по току.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?cur_count_apv</div>
+                    <div class="responce"><span>Ответ:</span>{"cur_count_apv":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?pow_enable</div>
+                <div class="info">Разрешение работы защиты по мощности.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?pow_enable</div>
+                    <div class="responce"><span>Ответ:</span>{"pow_enable":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?pow_leveloff</div>
+                <div class="info">Порог отключения по мощности.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?pow_leveloff</div>
+                    <div class="responce"><span>Ответ:</span>{"pow_leveloff":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?pow_timeoff</div>
+                <div class="info">Задержка отключения для защиты по мощности.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?pow_timeoff</div>
+                    <div class="responce"><span>Ответ:</span>{"pow_timeoff":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?pow_timeon_apv</div>
+                <div class="info">Задержка повторного включения для защиты по мощности.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?pow_timeon_apv</div>
+                    <div class="responce"><span>Ответ:</span>{"pow_timeon_apv":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?pow_count_apv</div>
+                <div class="info">Количество разрешенных включений для защиты по мощности.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?pow_count_apv</div>
+                    <div class="responce"><span>Ответ:</span>{"pow_count_apv":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?hctrl_enable</div>
+                <div class="info">Разрешение работы режима отпуск.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?hctrl_enable</div>
+                    <div class="responce"><span>Ответ:</span>{"hctrl_enable":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?hctrl_from</div>
+                <div class="info">Время начала отпуска.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?hctrl_from</div>
+                    <div class="responce"><span>Ответ:</span>{"hctrl_from":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?hctrl_to</div>
+                <div class="info">Время окончания отпуска.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?hctrl_to</div>
+                    <div class="responce"><span>Ответ:</span>{"hctrl_to":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?dst_enable</div>
+                <div class="info">Разрешение автоматического перехода часов на летнее время и обратно.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?dst_enable</div>
+                    <div class="responce"><span>Ответ:</span>{"dst_enable":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?time_gmt</div>
+                <div class="info">Часовой пояс.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?time_gmt</div>
+                    <div class="responce"><span>Ответ:</span>{"time_gmt":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?time_corr</div>
+                <div class="info">Коррекция времени.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?time_corr</div>
+                    <div class="responce"><span>Ответ:</span>{"time_corr":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?lock_panel_time</div>
+                <div class="info">Время блокировки лицевой панели.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?lock_panel_time</div>
+                    <div class="responce"><span>Ответ:</span>{"lock_panel_time":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?on_time_limit</div>
+                <div class="info">Время ограничения работы устройства.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?on_time_limit</div>
+                    <div class="responce"><span>Ответ:</span>{"on_time_limit":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?apv_reset_time</div>
+                <div class="info">Время сброса счетчиков повторных включений.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?apv_reset_time</div>
+                    <div class="responce"><span>Ответ:</span>{"apv_reset_time":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?sync_sntp_enable</div>
+                <div class="info">Разрешение работы клиента NTP.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?sync_sntp_enable</div>
+                    <div class="responce"><span>Ответ:</span>{"sync_sntp_enable":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?sync_sntp_address</div>
+                <div class="info">Адрес сервера NTP.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?sync_sntp_address</div>
+                    <div class="responce"><span>Ответ:</span>{"sync_sntp_address":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?sync_sntp_port</div>
+                <div class="info">Порт сервера NTP.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?sync_sntp_port</div>
+                    <div class="responce"><span>Ответ:</span>{"sync_sntp_port":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?sync_sntp_time</div>
+                <div class="info">Период синхронизации времени.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?sync_sntp_time</div>
+                    <div class="responce"><span>Ответ:</span>{"sync_sntp_time":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?cloud_enable</div>
+                <div class="info">Разрешение работы облака my.overvis.com.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?cloud_enable</div>
+                    <div class="responce"><span>Ответ:</span>{"cloud_enable":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?cloud_address</div>
+                <div class="info">Адрес облака my.overvis.com.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?cloud_address</div>
+                    <div class="responce"><span>Ответ:</span>{"cloud_address":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?cloud_port</div>
+                <div class="info">Порт облака my.overvis.com.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?cloud_port</div>
+                    <div class="responce"><span>Ответ:</span>{"cloud_port":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?user_info</div>
+                <div class="info">Название устройства.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?user_info</div>
+                    <div class="responce"><span>Ответ:</span>{"user_info":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?dev_passw</div>
+                <div class="info">Пароль устройства.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?dev_passw</div>
+                    <div class="responce"><span>Ответ:</span>{"dev_passw":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?led_intens</div>
+                <div class="info">Чркость индикации.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?led_intens</div>
+                    <div class="responce"><span>Ответ:</span>{"led_intens":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?cost_energy</div>
+                <div class="info">Стоимость электроэнергии.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?cost_energy</div>
+                    <div class="responce"><span>Ответ:</span>{"cost_energy":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?cost_unit</div>
+                <div class="info">Национальная валюта.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?cost_unit</div>
+                    <div class="responce"><span>Ответ:</span>{"cost_unit":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?load_type</div>
+                <div class="info">Тип нагрузки. (для ЕМ-126Т)</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?load_type</div>
+                    <div class="responce"><span>Ответ:</span>{"load_type":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?temp_corr</div>
+                <div class="info">Коррекция показаний температуры. (для ЕМ-126Т)</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?temp_corr</div>
+                    <div class="responce"><span>Ответ:</span>{"temp_corr":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?temp_hys</div>
+                <div class="info">Гистерезис по температуре. (для ЕМ-126Т)</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?temp_hys</div>
+                    <div class="responce"><span>Ответ:</span>{"temp_hys":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?dns1</div>
+                <div class="info">Адрес первичного DNS сервера.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?dns1</div>
+                    <div class="responce"><span>Ответ:</span>{"dns1":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?dns2</div>
+                <div class="info">Адрес вторичного DNS сервера.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?dns2</div>
+                    <div class="responce"><span>Ответ:</span>{"dns2":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?freq_enable</div>
+                <div class="info">Разрешение работы защиты по частоте.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?freq_enable</div>
+                    <div class="responce"><span>Ответ:</span>{"freq_enable":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?freq_leveloff_hi</div>
+                <div class="info">Верхний порог отключения по частоте.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?freq_leveloff_hi</div>
+                    <div class="responce"><span>Ответ:</span>{"freq_leveloff_hi":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?freq_leveloff_lo</div>
+                <div class="info">Нижний порог отключения по частоте.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?freq_leveloff_lo</div>
+                    <div class="responce"><span>Ответ:</span>{"freq_leveloff_lo":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?freq_timeoff</div>
+                <div class="info">Задержка отключения для защиты по частоте.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?freq_timeoff</div>
+                    <div class="responce"><span>Ответ:</span>{"freq_timeoff":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?freq_timeon_apv</div>
+                <div class="info">Задержка повторного включения для защиты по частоте.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?freq_timeon_apv</div>
+                    <div class="responce"><span>Ответ:</span>{"freq_timeon_apv":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?freq_count_apv</div>
+                <div class="info">Количество разрешенных повторных включений по частоте.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?freq_count_apv</div>
+                    <div class="responce"><span>Ответ:</span>{"freq_count_apv":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?settg_save_time</div>
+                <div class="info">Время последнего сохранения настроек.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?settg_save_time</div>
+                    <div class="responce"><span>Ответ:</span>{"settg_save_time":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - UNIX время в секундах.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?calibr_save_time</div>
+                <div class="info">Время последней калибровки.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?calibr_save_time</div>
+                    <div class="responce"><span>Ответ:</span>{"calibr_save_time":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - UNIX время в секундах.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?device_mac</div>
+                <div class="info">MAC адрес устройства.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?device_mac</div>
+                    <div class="responce"><span>Ответ:</span>{"device_mac":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/all/get?device_ip</div>
+                <div class="info">IP адрес устройства.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/all/get?device_ip</div>
+                    <div class="responce"><span>Ответ:</span>{"device_ip":VALUE,"STATUS":"OK"}
+                    <ul>
+                        <li>VALUE - значение.</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="group">
+            <div class="title">
+                <div class="name">EVENT API's</div>
+                <div class="info">Группа команд работы с расписанием.</div>
+            </div>
+            <div class="api">
+                <div class="name">/api/event/run</div>
+                <div class="info">Перевод устройства в режим работы по расписанию.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/event/run</div>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/event/delall</div>
+                <div class="info">Очистить расписание.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/event/delall</div>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса. ОК - успех, ERROR - ошибка.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/event/set?time&repeat&live&flags&value</div>
+                <div class="info">Задать новое событие расписания.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/event/set?time=TIME&repeat=REPEAT&live=LIVE&flags=FLAGS&value=VALUE</div>
+                    <ul>
+                        <li>TIME - UNIX время в секундах.</li>
+                        <li>REPEAT - период повторения от 0 до 7.</li>
+                        <li>LIVE - продолжительность события от 1 до 86400 с.</li>
+                        <li>FLAGS - значение зарезервировано и должно быть 0.</li>
+                        <li>VALUE - значение зарезервировано и должно быть 1.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса. ОК - успех, ERROR_ALREADY_EXISTS - событие существует, ERROR - ошибка.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/event/get?offset</div>
+                <div class="info">Чтение событий расписания.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/event/get?offset=VALUE</div>
+                    <ul>
+                        <li>VALUE - Смещение в расписании (при первом считывании всегда должно быть 0).</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"EVENTS":[[TIME,REPEAT,LIVE,FLAGS,VALUE],[TIME,REPEAT,LIVE,FLAGS,VALUE]],"OFFSET":320768,"STATUS":"OK"}
+                    <ul>
+                        <li>EVENTS - массив с записями расписания.</li>
+                        <li>TIME - UNIX время в секундах.</li>
+                        <li>REPEAT - период повторения от 0 до 7.</li>
+                        <li>LIVE - продолжительность события от 1 до 86400 с.</li>
+                        <li>FLAGS - значение зарезервировано и должно быть 0.</li>
+                        <li>VALUE - значение зарезервировано и должно быть 1.</li>
+                        <li>OFFSET - смещение в расписании (должно быть передано при следубщем запросе).</li>
+                        <li>STATUS - результат обработки запроса. ОК - успех, EOE - конец расписания, ERROR - ошибка.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="group">
+            <div class="title">
+                <div class="name">LOGER API's</div>
+                <div class="info">Группа команд работы с журналом данных.</div>
+            </div>
+            <div class="api">
+                <div class="name">/api/loger/delall</div>
+                <div class="info">Очистить журнала данных.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/loger/delall</div>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса. ОК - успех, ERROR - ошибка.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/loger/get?offset</div>
+                <div class="info">Получение записей из журнала.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/loger/get?offset=VALUE</div>
+                    <ul>
+                        <li>VALUE - Смещение в журнале (при первом считывании всегда должно быть 0).</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"LOGS":[[TIME,SYS_FLAGS,FAUL_FLAGS,VOLTAGE,POWER,CURRENT,TEMP,ENERG],[TIME,SYS_FLAGS,FAUL_FLAGS,VOLTAGE,POWER,CURRENT,TEMP,ENERG]],"OFFSET":320768,"STATUS":"OK"}
+                    <ul>
+                        <li>LOGS - массив с записями журнала.</li>
+                        <li>TIME - UNIX время записи в секундах.</li>
+                        <li>SYS_FLAGS - битовые флаги состояний на устройстве.</li>
+                        <ul>
+                            <li>Бит 0 - идет отсчет времени АПВ по напряжению.</li>
+                            <li>Бит 1 - идет отсчет времени АПВ по току.</li>
+                            <li>Бит 2 - идет отсчет времени АПВ по мощности.</li>
+                            <li>Бит 3 - идет отсчет времени задержки включения.</li>
+                            <li>Бит 4 - состояние реле нагрузки (включено/отключено).</li>
+                            <li>Бит 5 - зарезервирован.</li>
+                            <li>Бит 6 - управление нагрузкой выполняется по событиям.</li>
+                            <li>Бит 7 - управление нагрузкой выполняется пользователем вручную.</li>
+                            <li>Бит 8 - управление нагрузкой заблокировано отпуском.</li>
+                            <li>Бит 9 - время синхронизировано с сервером NTP.</li>
+                            <li>Бит 10 - время синхронизировано с облаком my.overvis.com.</li>
+                            <li>Бит 11 - лицевая панель заблокирована.</li>
+                            <li>Бит 12 - идет счет времени АПВ по частоте.</li>
+                            <li>Биты с 13 по 15 - зарезервированы.</li>
+                            <li>Бит 16 - wi-fi в режиме клиента сети.</li>
+                            <li>Бит 17 - wi-fi подключен и получен IP адрес.</li>
+                            <li>Бит 18 - wi-fi в режиме точки доступа сети.</li>
+                            <li>Бит 19 - wi-fi запущен и выдан IP адрес.</li>
+                            <li>Биты с 20 по 25 - зарезервированы.</li>
+                            <li>Бит 26 - WEB служба запущена.</li>
+                            <li>Бит 27 - CLOUD служба запущена.</li>
+                            <li>Бит 28 - NTP служба запущена.</li>
+                            <li>Бит 29 - DNS служба запущена.</li>
+                            <li>Биты с 30 по 31 - зарезервированы.</li>
+                        </ul>
+                        <li>FAUL_FLAGS - битовые флаги ошибок на устройстве.</li>
+                        <ul>
+                            <li>Бит 0 - верхний порог напряжения.</li>
+                            <li>Бит 1 - нижний порог напряжения.</li>
+                            <li>Бит 2 - обнаружено напряжение более 290 В.</li>
+                            <li>Бит 3 - превышен лимит повторных включений по напряжению.</li>
+                            <li>Бит 4 - порог по току.</li>
+                            <li>Бит 5 - обнаружен ток более 17 А.</li>
+                            <li>Бит 6 - превышен лимит повторных включений по току.</li>
+                            <li>Бит 7 - порог по мощности.</li>
+                            <li>Бит 8 - превышен лимит повторных включений по мощности.</li>
+                            <li>Бит 9 - неисправность датчика температуры.</li>
+                            <li>Бит 10 - обрыв датчика температуры.</li>
+                            <li>Бит 11 - замыкание датчика температуры.</li>
+                            <li>Бит 12 - сбой часов реального времени.</li>
+                            <li>Бит 13 - неисправность реле нагрузки (наличие тока при отключенном реле).</li>
+                            <li>Бит 14 - заблокирован по ограничению времени работы.</li>
+                            <li>Бит 15 - верхний порог частоты.</li>
+                            <li>Бит 16 - нижний порог частоты.</li>
+                            <li>Бит 17 - превышен лимит повторных включений по частоте.</li>
+                            <li>Биты с 18 по 29- зарезервированы.</li>
+                            <li>Бит 30 - устройство не калибровано.</li>
+                            <li>Бит 31 - повреждение настроек.</li>
+                        </ul>
+                        <li>VOLTAGE - напряжение.</li>
+                        <li>POWER - значение активной мощности.</li>
+                        <li>CURRENT - значение тока.</li>
+                        <li>TEMP - значение температуры.</li>
+                        <li>ENERG - значение счетчика электроэнергии.</li>
+                        <li>OFFSET - смещение в журнале (должно быть передано при следубщем запросе).</li>
+                        <li>STATUS - результат обработки запроса. ОК - успех, EOSL - конец журнала, ERROR - ошибка.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="group">
+            <div class="title">
+                <div class="name">SYSLOG API's</div>
+                <div class="info">Группа команд работы с системным журналом.</div>
+            </div>
+            <div class="api">
+                <div class="name">/api/syslog/delall</div>
+                <div class="info">Очистить системный журнал.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/syslog/delall</div>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса. ОК - успех, ERROR - ошибка.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/syslog/get?offset</div>
+                <div class="info">Получение записей из журнала.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/syslog/get?offset=VALUE</div>
+                    <ul>
+                        <li>VALUE - Смещение в журнале (при первом считывании всегда должно быть 0).</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"SYSLOGS":[[TIME,"MSG"],[TIME,"MSG"]],"OFFSET":320768,"STATUS":"OK"}
+                    <ul>
+                        <li>SYSLOGS - массив с записями журнала.</li>
+                        <li>TIME - UNIX время записи в секундах.</li>
+                        <li>MSG - ASCII текст записи.</li>
+                        <li>OFFSET - смещение в журнале (должно быть передано при следубщем запросе).</li>
+                        <li>STATUS - результат обработки запроса. ОК - успех, EOSL - конец журнала, ERROR - ошибка.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="group">
+            <div class="title">
+                <div class="name">SETTINGS API's</div>
+                <div class="info">Группа команд задания настроек.</div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?wifi_ssid</div>
+                <div class="info">Настройка имени сети Wi-Fi.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?wifi_ssid=VALUE</div>
+                    <ul>
+                        <li>VALUE - Имя сети Wi-Fi (спецсимволы должны быть экранированы по стандарту HTTP/1.0).</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?wifi_passw</div>
+                <div class="info">Настройка пароля сети Wi-Fi.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?wifi_passw=VALUE</div>
+                    <ul>
+                        <li>VALUE - Пароль сети Wi-Fi (спецсимволы должны быть экранированы по стандарту HTTP/1.0).</li>
+                    </ul>
+                    <div class="comment">Если значение VALUE передано как хеш предыдущего пароля полученного при чтении /api/all/get?wifi_passw, пароль останется неизменным.</div>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?wifi_dhcp_enable</div>
+                <div class="info">Настройка DHCP.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?wifi_dhcp_enable=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение 1 - включено, 0 - отключено.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?wifi_ip</div>
+                <div class="info">Настройка IP адреса.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?wifi_ip=VALUE</div>
+                    <ul>
+                        <li>VALUE - Новый IP адрес 192.168.0.100.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?wifi_gw</div>
+                <div class="info">Настройка шлюза.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?wifi_gw=VALUE</div>
+                    <ul>
+                        <li>VALUE - Новый адрес шлюза 192.168.0.1.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?wifi_mask</div>
+                <div class="info">Настройка маски подсети.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?wifi_mask=VALUE</div>
+                    <ul>
+                        <li>VALUE - Новая маска подсети 255.255.255.0.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?volt_leveloff_hi</div>
+                <div class="info">Верхний порог отключения по напряжению.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?volt_leveloff_hi=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 230 до 290 В </li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?volt_leveloff_lo</div>
+                <div class="info">Нижний порог отключения по напряжению.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?volt_leveloff_lo=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 100 до 220 В </li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?volt_level_hys</div>
+                <div class="info">Гистерезис по напряжению.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?volt_level_hys=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 0 до 20 В </li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?volt_timeoff_hi</div>
+                <div class="info">Время отключения по верхнему порогу по напряжению.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?volt_timeoff_hi=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 200 до 2000 мс </li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?volt_timeoff_lo</div>
+                <div class="info">Время отключения по нижнему порогу по напряжению.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?volt_timeoff_lo=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 200 до 60000 мс </li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?volt_timeon_apv</div>
+                <div class="info">Время повторного включения для защиты напряжения.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?volt_timeon_apv=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 200 до 600000 мс </li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?volt_count_apv</div>
+                <div class="info">Количество разрешенных повторных включений для защиты напряжения.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?volt_count_apv=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение 0 - запрещено, от 1 до 10 - разрешено, 65535 - разрешено всегда</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?cur_leveloff</div>
+                <div class="info">Порог отключения по току.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?cur_leveloff=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 10 до 160 А*10 </li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?cur_timeoff</div>
+                <div class="info">Время отключения по току.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?cur_timeoff=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 200 до 10000 мс </li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?cur_timeon_apv</div>
+                <div class="info">Время повторного включения для защиты напряжения.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?cur_timeon_apv=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 500 до 600000 мс </li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?cur_count_apv</div>
+                <div class="info">Количество разрешенных повторных включений для защиты тока.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?cur_count_apv=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение 0 - запрещено, от 1 до 10 - разрешено, 65535 - разрешено всегда</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?pow_enable</div>
+                <div class="info">Включение/Отключение защиты по мощности.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?pow_enable=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение 1 - включено, 0 - отключено</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?pow_leveloff</div>
+                <div class="info">Порог отключения по мощности.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?pow_leveloff=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 100 до 3680 Вт</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?pow_timeoff</div>
+                <div class="info">Время отключения по мощности.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?pow_timeoff=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 200 до 10000 мс </li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?pow_timeon_apv</div>
+                <div class="info">Время повторного включения для защиты мощности.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?pow_timeon_apv=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 500 до 600000 мс </li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?pow_count_apv</div>
+                <div class="info">Количество разрешенных повторных включений для защиты мощности.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?pow_count_apv=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение 0 - запрещено, от 1 до 10 - разрешено, 65535 - разрешено всегда</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?freq_enable</div>
+                <div class="info">Включение/Отключение защиты по чстоте.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?freq_enable=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение 1 - включено, 0 - отключено</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?freq_leveloff_hi</div>
+                <div class="info">Верхний порог отключения по частоте.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?freq_leveloff_hi=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 5000 до 6500 Гц*100 </li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?freq_leveloff_lo</div>
+                <div class="info">Нижний порог отключения по частоте.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?freq_leveloff_lo=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 4500 до 5000 Гц*100 </li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?freq_timeoff</div>
+                <div class="info">Время отключения по частоте.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?freq_timeoff=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 200 до 10000 мс </li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?freq_timeon_apv</div>
+                <div class="info">Время повторного включения для защиты напряжения.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?freq_timeon_apv=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 200 до 600000 мс </li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?freq_count_apv</div>
+                <div class="info">Количество разрешенных повторных включений для защиты напряжения.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?freq_count_apv=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение 0 - запрещено, от 1 до 10 - разрешено, 65535 - разрешено всегда</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?hctrl_enable</div>
+                <div class="info">Разрешение работы режима отпуск.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?hctrl_enable=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение 1 - разрешено, 0 - запрещено</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?hctrl_from</div>
+                <div class="info">Время начала отпуска.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?hctrl_from=VALUE</div>
+                    <ul>
+                        <li>VALUE - UNIX время в секундах.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?hctrl_to</div>
+                <div class="info">Время окончания отпуска.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?hctrl_to=VALUE</div>
+                    <ul>
+                        <li>VALUE - UNIX время в секундах.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?time_gmt</div>
+                <div class="info">Часовой пояс.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?time_gmt=VALUE</div>
+                    <ul>
+                        <li>VALUE - GMT время в секундах.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?time_corr</div>
+                <div class="info">Коррекция хода часов РВ.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?time_corr=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от -99 до 99 s*10.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?dst_enable</div>
+                <div class="info">Авоматический переход на летнее время и обратно.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?dst_enable=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение 1 - разрешено, 0 - запрещено.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?on_time_limit</div>
+                <div class="info">Ограничение времени работы.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?on_time_limit=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение 0 - без ограничения, от 60000 до 3600000 мс.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?apv_reset_time</div>
+                <div class="info">Время сброса счетчиков повторных включений (для защит).</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?apv_reset_time=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 60000 до 3600000 мс.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?sync_sntp_enable</div>
+                <div class="info">Разрешение синхронизации времени по SNTP.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?sync_sntp_enable=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение 0 - запрещено, 1 - разрешено.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?sync_sntp_address</div>
+                <div class="info">Адрес сервера SNTP.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?sync_sntp_address=VALUE</div>
+                    <ul>
+                        <li>VALUE - ASCII строка с максимальной длинной в 32 символа.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?sync_sntp_port</div>
+                <div class="info">Порт сервера SNTP.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?sync_sntp_port=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 1 до 65535 (123).</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?sync_sntp_time</div>
+                <div class="info">Период синхронизации сервера SNTP.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?sync_sntp_time=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 3600000 до 86400000 мс.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?cloud_enable</div>
+                <div class="info">Разрешение работы сервера my.overvis.com.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?cloud_enable=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение 0 - запрещено, 1 - разрешено.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?cloud_address</div>
+                <div class="info">Адрес сервера my.overvis.com.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?cloud_address=VALUE</div>
+                    <ul>
+                        <li>VALUE - ASCII строка с максимальной длинной в 32 символа.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?cloud_port</div>
+                <div class="info">Порт сервера my.overvis.com.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?cloud_port=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 1 до 65535 (20504).</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?load_type</div>
+                <div class="info">Тип нагрузки (только для ЕМ-126Т).</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?load_type=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение 0 - нагреватель, 1 - охладитель.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?temp_corr</div>
+                <div class="info">Коррекция показаний датчика температуры (только для ЕМ-126Т).</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?temp_corr=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от -99 до 99 С*10.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?temp_hys</div>
+                <div class="info">Гистерезис по температуре (только для ЕМ-126Т).</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?temp_hys=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 1 до 300 С*10.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?user_info</div>
+                <div class="info">Название устройства.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?user_info=VALUE</div>
+                    <ul>
+                        <li>VALUE - ASCII строка закодированная в base64 с максимальной длинной в 32 символа.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?dev_passw</div>
+                <div class="info">Пароль устройства.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?dev_passw=VALUE</div>
+                    <ul>
+                        <li>VALUE - ASCII строка закодированная в base64 с максимальной длинной в 32 символа.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?led_intens</div>
+                <div class="info">Яркость свечения индикации.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?led_intens=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 1 до 15.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?lock_panel_time</div>
+                <div class="info">Блокировка лицевой панели.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?lock_panel_time=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение 0 - запрещено, от 60000 до 600000 мс.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?cost_energy</div>
+                <div class="info">Цена 1кВт электроэнергии.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?cost_energy=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение от 1 до 9999999 UAH*1000.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?cost_unit</div>
+                <div class="info">Национальная валюта.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?cost_unit=VALUE</div>
+                    <ul>
+                        <li>VALUE - Значение 0='BYR', 1='BGN', 2='CZK', 3='CHF', 4='EUR', 5='GBP', 6='INR', 7='KZT', 8='LVL', 9='LTL', 10='MDL', 11='PLN', 12='PRB', 13='RUB', 14='RON', 15='SEK', 16='UAH', 17='USD'.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?dns1</div>
+                <div class="info">Адрес первичного сервера DNS.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?dns1=VALUE</div>
+                    <ul>
+                        <li>VALUE - IP адрес 192.168.0.100.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/settings/set?dns2</div>
+                <div class="info">Адрес вторичного сервера DNS.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/settings/set?dns2=VALUE</div>
+                    <ul>
+                        <li>VALUE - IP адрес 192.168.0.100.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="group">
+            <div class="title">
+                <div class="name">CLOCK API's</div>
+                <div class="info">Группа команд управления часами.</div>
+            </div>
+            <div class="api">
+                <div class="name">/api/clock/set</div>
+                <div class="info">Установить новое время.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/clock/set?sec=1601450456</div>
+                    <ul>
+                        <li>1601450456 - UNIX время в секундах.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/clock/sync</div>
+                <div class="info">Запуск синхронизации времени по SNTP.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/utils/ctrl?on или /api/utils/ctrl?off</div>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+                <div class="comment">Синхронизация времени должна быть включена на устройстве.</div>
+            </div>
+        </div>
+        
+        <div class="group">
+            <div class="title">
+                <div class="name">UTILS API's</div>
+                <div class="info">Группа команд управления.</div>
+            </div>
+            <div class="api">
+                <div class="name">/api/utils/ctrl</div>
+                <div class="info">Принудительное включение/отключение нагрузки (on - включение, off - отключение).</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/utils/ctrl?on или /api/utils/ctrl?off</div>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/utils/enrgrst</div>
+                <div class="info">Сброс счетчиков электроэнергии.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/utils/enrgrst</div>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса. OK - успех, ERROR - ошибка.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/utils/reboot</div>
+                <div class="info">Перезагрузка устройства.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/utils/reboot</div>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="group">
+            <div class="title">
+                <div class="name">LOGIN API's</div>
+                <div class="info">Группа команд для входа на устройство.</div>
+            </div>
+            <div class="api">
+                <div class="name">/api/login?device_info</div>
+                <div class="info">Получение имени устройства и его типа.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/login?device_info</div>
+                    <div class="responce"><span>Ответ:</span>{"device_id":243,"user_info":"RU0tMTI1","STATUS":"OK"}
+                    <ul>
+                        <li>device_id - код устрйоства (243 - EM-125, 293 - ЕМ-126Т, 273 - ЕМ-129);</li>
+                        <li>user_info - имя устройства в base64;</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/login?salt</div>
+                <div class="info">Получение соли для шифрования пароля.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/login?salt</div>
+                    <div class="responce"><span>Ответ:</span>{"SALT":"7b962153","STATUS":"OK"}
+                    <ul>
+                        <li>SALT - соль;</li>
+                        <li>STATUS - результат обработки запроса.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/login?login</div>
+                <div class="info">Вход на устройство, получение кода сессии.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/login?login=PASSWODR</div>
+                    <ul>
+                        <li>PASSWODR - пароль зашифрованный алгоритмом SHA1, PASSWORD = "EM-125" + "ПАРОЛЬ УСТРОЙСТВА" + SALT</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"SID":"73c637c6dbea14c75c","STATUS":"OK"}
+                        <ul>
+                            <li>SID - код сессии;</li>
+                            <li>STATUS - результат обработки запроса. OK - успех, ERROR_LOGIN - ошибка.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="name">/api/login?logout</div>
+                <div class="info">Выход из устройства, удаление ключа сессии.</div>
+                <div class="example">
+                    <div class="request"><span>Запрос:</span>/api/login?logout=73c637c6dbea14c75c</div>
+                    <ul>
+                        <li>73c637c6dbea14c75c - код сессии.</li>
+                    </ul>
+                    <div class="responce"><span>Ответ:</span>{"STATUS":"OK"}
+                    <ul>
+                        <li>STATUS - результат обработки запроса. OK - успех, ERROR_LOGOUT - ошибка.</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </body>
+</html>
