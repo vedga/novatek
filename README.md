@@ -7,7 +7,7 @@
 * [EM-129](https://novatek-electro.ru/catalog/ustroystva-s-wi-fi-upravleniem/wi-fi-schetchik-elektroenergii-s-funktsiey-zashchity-i-upravleniya-em-129/)
 
 ## Подключение к Home Assistant
-В домашнем каталоге Home Assistant создать каталог с именем *custom_components*, если он еще не существует, перейти в него и выполнить команду `git clone ...`.
+В домашнем каталоге Home Assistant создать каталог с именем *custom_components*, если он еще не существует, перейти в него и выполнить команду `git clone https://github.com/vedga/novatek.git`.
 
 В файле *configuration.yaml* добавляем строчку
 ```
