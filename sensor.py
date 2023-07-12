@@ -3,41 +3,63 @@ from __future__ import annotations
 
 from homeassistant.components import sensor
 from homeassistant.components.sensor import SensorEntity
-from homeassistant.const import DEVICE_CLASS_POWER, ELECTRIC_POTENTIAL_VOLT, ELECTRIC_CURRENT_AMPERE, POWER_WATT, ENERGY_WATT_HOUR, FREQUENCY_HERTZ
+from homeassistant.const import (
+    DEVICE_CLASS_POWER,
+    ELECTRIC_POTENTIAL_VOLT,
+    ELECTRIC_CURRENT_AMPERE,
+    POWER_WATT,
+    ENERGY_WATT_HOUR,
+    FREQUENCY_HERTZ,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 import logging
 import json
 
-#from . import novatek
+# from . import novatek
 from . import DOMAIN
 
 SENSORS = {
-    'power': [DEVICE_CLASS_POWER, sensor.STATE_CLASS_MEASUREMENT, POWER_WATT, None],
-    'frequency': [DEVICE_CLASS_POWER, None, FREQUENCY_HERTZ, None],
-    'energy': [sensor.DEVICE_CLASS_ENERGY, sensor.STATE_CLASS_TOTAL, ENERGY_WATT_HOUR, None],
-    'current': [sensor.DEVICE_CLASS_CURRENT, sensor.STATE_CLASS_MEASUREMENT, ELECTRIC_CURRENT_AMPERE, None],
-    'voltage': [sensor.DEVICE_CLASS_VOLTAGE, sensor.STATE_CLASS_MEASUREMENT, ELECTRIC_POTENTIAL_VOLT, None]
+    "power": [DEVICE_CLASS_POWER, sensor.STATE_CLASS_MEASUREMENT, POWER_WATT, None],
+    "frequency": [DEVICE_CLASS_POWER, None, FREQUENCY_HERTZ, None],
+    "energy": [
+        sensor.DEVICE_CLASS_ENERGY,
+        sensor.STATE_CLASS_TOTAL,
+        ENERGY_WATT_HOUR,
+        None,
+    ],
+    "current": [
+        sensor.DEVICE_CLASS_CURRENT,
+        sensor.STATE_CLASS_MEASUREMENT,
+        ELECTRIC_CURRENT_AMPERE,
+        None,
+    ],
+    "voltage": [
+        sensor.DEVICE_CLASS_VOLTAGE,
+        sensor.STATE_CLASS_MEASUREMENT,
+        ELECTRIC_POTENTIAL_VOLT,
+        None,
+    ],
 }
 
-TAG_ACTIVE = 'active'
-TAG_FULL = 'full'
+TAG_ACTIVE = "active"
+TAG_FULL = "full"
 
 _LOGGER = logging.getLogger(__name__)
 
-async def async_setup_platform(hass, config, add_entities,
-                               discovery_info=None):
-    #_LOGGER.warning(f"novatek: called async_setup_platform()")
+
+async def async_setup_platform(hass, config, add_entities, discovery_info=None):
+    # _LOGGER.warning(f"novatek: called async_setup_platform()")
 
     if discovery_info is None:
         return
 
-    #x = json.dumps(discovery_info)
-    #_LOGGER.warning(f"novatek: discovery_info {x}")
+    # x = json.dumps(discovery_info)
+    # _LOGGER.warning(f"novatek: discovery_info {x}")
 
-    #y = json.dumps(config)
-    #_LOGGER.warning(f"novatek: config {y}")
+    # y = json.dumps(config)
+    # _LOGGER.warning(f"novatek: config {y}")
 
     registry = hass.data[DOMAIN]
     if registry is None:
@@ -47,13 +69,17 @@ async def async_setup_platform(hass, config, add_entities,
     if device is None:
         raise Exception("novatek: Device must be exist at this point")
 
-    add_entities([VoltageSensor(discovery_info["name"], device),
-                  CurrentSensor(discovery_info["name"], device),
-                  PowerSensor(discovery_info["name"], device, TAG_ACTIVE),
-                  PowerSensor(discovery_info["name"], device, TAG_FULL),
-                  EnergySensor(discovery_info["name"], device, TAG_ACTIVE),
-                  EnergySensor(discovery_info["name"], device, TAG_FULL),
-                  FrequencySensor(discovery_info["name"], device)])
+    add_entities(
+        [
+            VoltageSensor(discovery_info["name"], device),
+            CurrentSensor(discovery_info["name"], device),
+            PowerSensor(discovery_info["name"], device, TAG_ACTIVE),
+            PowerSensor(discovery_info["name"], device, TAG_FULL),
+            EnergySensor(discovery_info["name"], device, TAG_ACTIVE),
+            EnergySensor(discovery_info["name"], device, TAG_FULL),
+            FrequencySensor(discovery_info["name"], device),
+        ]
+    )
 
 
 class VoltageSensor(SensorEntity):
@@ -72,7 +98,7 @@ class VoltageSensor(SensorEntity):
     @property
     def name(self) -> str:
         """Return the name of the sensor."""
-        return 'novatek voltage value from device ' + self._name
+        return "novatek voltage value from device " + self._name
 
     @property
     def state(self):
@@ -106,6 +132,7 @@ class VoltageSensor(SensorEntity):
             self._device.Connect()
             self._state = self._device.Voltage()
 
+
 class CurrentSensor(SensorEntity):
     """Representation of a Sensor."""
 
@@ -122,7 +149,7 @@ class CurrentSensor(SensorEntity):
     @property
     def name(self) -> str:
         """Return the name of the sensor."""
-        return 'novatek current value from device ' + self._name
+        return "novatek current value from device " + self._name
 
     @property
     def state(self):
@@ -156,6 +183,7 @@ class CurrentSensor(SensorEntity):
             self._device.Connect()
             self._state = self._device.Current()
 
+
 class PowerSensor(SensorEntity):
     """Representation of a Sensor."""
 
@@ -173,7 +201,7 @@ class PowerSensor(SensorEntity):
     @property
     def name(self) -> str:
         """Return the name of the sensor."""
-        return 'novatek ' + self._tag + ' power value from device ' + self._name
+        return "novatek " + self._tag + " power value from device " + self._name
 
     @property
     def state(self):
@@ -213,6 +241,7 @@ class PowerSensor(SensorEntity):
             else:
                 self._state = self._device.FullPower()
 
+
 class EnergySensor(SensorEntity):
     """Representation of a Sensor."""
 
@@ -230,7 +259,7 @@ class EnergySensor(SensorEntity):
     @property
     def name(self) -> str:
         """Return the name of the sensor."""
-        return 'novatek ' + self._tag + ' energy value from device ' + self._name
+        return "novatek " + self._tag + " energy value from device " + self._name
 
     @property
     def state(self):
@@ -270,6 +299,7 @@ class EnergySensor(SensorEntity):
             else:
                 self._state = self._device.FullEnergy()
 
+
 class FrequencySensor(SensorEntity):
     """Representation of a Sensor."""
 
@@ -286,7 +316,7 @@ class FrequencySensor(SensorEntity):
     @property
     def name(self) -> str:
         """Return the name of the sensor."""
-        return 'novatek frequency value from device ' + self._name
+        return "novatek frequency value from device " + self._name
 
     @property
     def state(self):
